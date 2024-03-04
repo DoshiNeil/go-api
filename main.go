@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"go-api/src/models"
+	"go-api/src/services"
 	"go-api/src/utils"
 	"net/http"
 
@@ -12,21 +13,13 @@ import (
 func main() {
 	utils.LoadEnv()
 	db := models.OpenDatabaseConnection()
-
-	newUser := models.User{
-		FirstName: "Jane",
-		LastName:  "Doe",
-		Email:     "jane.doe@gmail.com",
-		Country:   "Spain",
-		Age:       25,
+	srv := services.NewUserService(db)
+	user, err := srv.GetFirstUsers()
+	if err != nil {
+		panic("Error fetching first user" + err.Error())
+	} else {
+		fmt.Println("first user fetched successfully", user.ID)
 	}
-
-	result := db.Create(&newUser)
-	if result.Error != nil {
-		panic("failed to create a new user" + result.Error.Error())
-	}
-
-	fmt.Printf("New User added successfully")
 
 	router := gin.Default()
 	router.GET("/gin", func(c *gin.Context) {

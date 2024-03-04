@@ -18,6 +18,12 @@ type userService struct {
 	db *gorm.DB
 }
 
+func NewUserService(db *gorm.DB) UserService {
+	return &userService{
+		db: db,
+	}
+}
+
 func (us *userService) GetFirstUsers() (*models.User, error) {
 	var user models.User
 	result := us.db.First(&user)
